@@ -54,12 +54,12 @@ WHERE country_is_country = 0
 ## Task 4
 ```{python}
 execute_ddl(cnx, """
-DROP TABLE IF EXISTS wdi_country;
+DROP TABLE IF EXISTS my_country;
 """)
 ```
 ```{python}
 execute_ddl(cnx, """
-CREATE TABLE wdi_country AS
+CREATE TABLE my_country AS
 SELECT *
 FROM world_bank_data.wdi_country
 WHERE country_is_country = 1;
@@ -67,7 +67,7 @@ WHERE country_is_country = 1;
 ```
 ```{python}
 run_sql_and_return_html(cnx, """
-SELECT COUNT(*) FROM wdi_country
+SELECT COUNT(*) FROM my_country
 """)
 ```
 
@@ -75,7 +75,7 @@ SELECT COUNT(*) FROM wdi_country
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT COUNT(*)
-FROM wdi_country
+FROM my_country
 """)
 ```
 
@@ -83,7 +83,7 @@ FROM wdi_country
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT DISTINCT country_region
-FROM wdi_country
+FROM my_country
 ORDER BY country_region
 """)
 ```
@@ -92,7 +92,7 @@ ORDER BY country_region
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_region, COUNT(*) AS num_countries
-FROM wdi_country
+FROM my_country
 GROUP BY country_region
 ORDER BY num_countries DESC
 """)
@@ -102,7 +102,7 @@ ORDER BY num_countries DESC
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_name, country_region
-FROM wdi_country
+FROM my_country
 WHERE country_region = 'North America'
 ORDER BY country_name
 """)
@@ -112,7 +112,7 @@ ORDER BY country_name
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_region, country_name, country_long_name
-FROM wdi_country
+FROM my_country
 WHERE country_code = 'QAT'
 """)
 ```
@@ -121,7 +121,7 @@ WHERE country_code = 'QAT'
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_code, country_name, country_abbr, country_wb_abbr, country_region
-FROM wdi_country
+FROM my_country
 WHERE country_abbr <> country_wb_abbr
 ORDER BY country_name
 """)
@@ -131,7 +131,7 @@ ORDER BY country_name
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_income_group, COUNT(*) AS num_countries
-FROM wdi_country
+FROM my_country
 GROUP BY country_income_group
 ORDER BY num_countries DESC
 """)
@@ -141,7 +141,7 @@ ORDER BY num_countries DESC
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_name
-FROM wdi_country
+FROM my_country
 WHERE country_income_group IS NULL
 """)
 ```
@@ -149,7 +149,7 @@ WHERE country_income_group IS NULL
 ## Task 13
 ```{python}
 execute_ddl(cnx, """
-UPDATE wdi_country
+UPDATE world_bank_data.wdi_country
 SET country_income_group = 'High income'
 WHERE country_name = 'Venezuela, RB';
 """)
@@ -157,7 +157,7 @@ WHERE country_name = 'Venezuela, RB';
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_name, country_income_group
-FROM wdi_country
+FROM world_bank_data.wdi_country
 WHERE country_name = 'Venezuela, RB'
 """)
 ```
@@ -166,7 +166,7 @@ WHERE country_name = 'Venezuela, RB'
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_region, country_income_group, COUNT(*) AS num_countries
-FROM wdi_country
+FROM my_country
 GROUP BY country_region, country_income_group
 ORDER BY country_region, country_income_group
 """)
@@ -183,7 +183,7 @@ SELECT
   SUM(CASE WHEN country_income_group = 'Low income' THEN 1 ELSE 0 END) AS Low,
   SUM(CASE WHEN country_income_group IS NULL THEN 1 ELSE 0 END) AS Unknown,
   COUNT(*) AS Total
-FROM wdi_country
+FROM my_country
 GROUP BY country_region
 """)
 ```
@@ -192,7 +192,7 @@ GROUP BY country_region
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT COUNT(*) AS num_low_income, country_region, country_income_group
-FROM wdi_country
+FROM my_country
 WHERE country_income_group = 'Low income'
 GROUP BY country_region, country_income_group
 ORDER BY num_low_income DESC
@@ -204,16 +204,12 @@ LIMIT 1
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_code, country_name, country_region, country_income_group
-FROM wdi_country
+FROM my_country
 WHERE country_region = (
-  SELECT country_region
-  FROM wdi_country
-  WHERE country_code = 'MHL'
+  SELECT country_region FROM my_country WHERE country_code = 'MHL'
 )
 AND country_income_group = (
-  SELECT country_income_group
-  FROM wdi_country
-  WHERE country_code = 'MHL'
+  SELECT country_income_group FROM my_country WHERE country_code = 'MHL'
 )
 ORDER BY country_name
 """)
@@ -224,12 +220,11 @@ ORDER BY country_name
 run_sql_and_return_html(cnx, """
 SELECT region.region, income.income
 FROM
-  (SELECT DISTINCT country_region AS region FROM wdi_country) AS region
+  (SELECT DISTINCT country_region AS region FROM my_country) AS region
 CROSS JOIN
-  (SELECT DISTINCT country_income_group AS income FROM wdi_country) AS income
+  (SELECT DISTINCT country_income_group AS income FROM my_country) AS income
 WHERE (region.region, income.income) NOT IN (
-  SELECT country_region, country_income_group
-  FROM wdi_country
+  SELECT country_region, country_income_group FROM my_country
 )
 """)
 ```
@@ -239,21 +234,21 @@ WHERE (region.region, income.income) NOT IN (
 run_sql_and_return_html(cnx, """
 WITH base AS (
   SELECT country_region, country_income_group, COUNT(*) AS cnt
-  FROM wdi_country
+  FROM my_country
   GROUP BY country_region, country_income_group
 ),
 region_totals AS (
   SELECT country_region, COUNT(*) AS region_total
-  FROM wdi_country
+  FROM my_country
   GROUP BY country_region
 ),
 income_totals AS (
   SELECT country_income_group, COUNT(*) AS income_total
-  FROM wdi_country
+  FROM my_country
   GROUP BY country_income_group
 ),
 total AS (
-  SELECT COUNT(*) AS grand_total FROM wdi_country
+  SELECT COUNT(*) AS grand_total FROM my_country
 )
 SELECT
   b.country_region, b.country_income_group, b.cnt,
@@ -267,14 +262,15 @@ JOIN total t
 ```
 
 ## Task 20
+```{python}
 run_sql_and_return_html(cnx, """
 WITH base AS (
   SELECT country_region, country_income_group, COUNT(*) AS cnt
-  FROM wdi_country
+  FROM my_country
   GROUP BY country_region, country_income_group
 ),
 total AS (
-  SELECT COUNT(*) AS grand_total FROM wdi_country
+  SELECT COUNT(*) AS grand_total FROM my_country
 )
 SELECT
   country_region,
@@ -287,16 +283,18 @@ FROM base, total
 GROUP BY country_region
 ORDER BY country_region
 """)
+```
 
 ## Task 21
+```{python}
 run_sql_and_return_html(cnx, """
 WITH income_counts AS (
   SELECT country_income_group, COUNT(*) AS count
-  FROM wdi_country
+  FROM my_country
   GROUP BY country_income_group
 ),
 total AS (
-  SELECT COUNT(*) AS total_count FROM wdi_country
+  SELECT COUNT(*) AS total_count FROM my_country
 )
 SELECT
   i.country_income_group AS income_group,
@@ -306,6 +304,7 @@ SELECT
 FROM income_counts i, total t
 ORDER BY pct_total DESC
 """)
+```
 
 ## Reflection
 
