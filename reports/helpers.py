@@ -119,7 +119,8 @@ def create_db_wrapper( config_map ):
         errors.append("Fix the .env file and rerun quarto ...")
         # Convert errors to a DataFrame
         error_df = pd.DataFrame({'Errors loading .env file': errors})
-        print(f"{'\n'.join(errors)}")
+        joined_errors = "\n".join(errors)
+        print(f"{joined_errors}")
     else:
     # build a sqlalchemy engine string
         engine_uri = f"mysql+pymysql://{config['user']}:{config['password']}@{config['host']}/{config['database']}"
