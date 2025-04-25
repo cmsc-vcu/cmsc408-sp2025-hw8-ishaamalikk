@@ -2,35 +2,86 @@
 
 ## Homework 8 - World Bank Indicator Analysis 🌍
 
-This project is part of CMSC 408 and focuses on analyzing the World Bank's World Development Indicator (WDI) dataset using SQL. The goal was to extract meaningful insights from a large, structured dataset while practicing advanced SQL concepts.
+---
 
-### 🔎 What This Project Covers
-- Connecting to a database using secure credentials and `.env` variables.
-- Exploring the WDI dataset using `SELECT`, `WHERE`, `GROUP BY`, and `JOIN` queries.
-- Creating new tables based on filtered criteria (e.g., countries only).
-- Generating pivot-style summary tables using `CASE WHEN` and aggregation.
-- Writing multi-step queries using `CTEs` to calculate percentages and distributions.
-- Identifying missing data combinations and correcting data anomalies.
+## 🌍 Overview
 
-### 🧠 Skills Practiced
-- Data filtering and aggregation
-- Cross joins and identifying missing relationships
-- Conditional logic in SQL (`CASE` statements)
-- Percentage calculations using nested queries
-- Database table creation and updates
+This assignment explores the **World Development Indicators (WDI)** database curated by the World Bank. The project emphasizes real-world SQL data analysis, schema exploration, and data cleaning across a large dataset containing both country and regional statistics.
 
-### 📝 Reflection
-This assignment helped reinforce how SQL can be used not just for data extraction, but also for shaping and transforming data for insights. It emphasized problem-solving strategies in structured querying, and introduced me to using multiple CTEs for organizing complex logic.
-
-### 🚀 How to Run This
-1. Clone the repo
-2. Make sure your `.env` file is set with the appropriate database credentials.
-3. Open `report.qmd` and run:
-   ```bash
-   quarto render reports/report.qmd
-   ```
-4. View the generated `report.html` and submit as needed.
+You’ll find insights on country counts, region breakdowns, income distribution, and data inconsistencies using structured SQL queries and **Quarto** to generate a full report.
 
 ---
 
-💡 _“Remind your future self what you were thinking”_ — probably that writing clean, readable queries makes life a lot easier. 😄
+## 📁 Project Structure
+
+cmsc408-sp2025-hw8-ishaamalikk/
+│
+├── reports/
+│   ├── report.qmd         # Quarto notebook with all tasks & queries
+│   ├── report.html        # Final rendered report to submit
+│   ├── helpers.py         # DB connection/query helpers
+│   ├── _quarto.yml        # Metadata config (name, email, etc.)
+│
+├── .gitignore             # Ignores .env and unnecessary files
+├── README.md              # This file
+
+---
+
+## ✅ Topics Covered
+
+- SQL basics: `SELECT`, `WHERE`, `GROUP BY`, `ORDER BY`
+- SQL joins and filters for non-countries and missing data
+- Creating and filtering new tables using `CREATE TABLE ... SELECT`
+- Conditional aggregation using `CASE WHEN`
+- Nested queries & `CTEs` for calculating region-income percentages
+- Cross-tabulation and missing pair detection
+
+---
+
+## 🧠 Key Skills Practiced
+
+- Writing SQL queries for real-world datasets  
+- Transforming data with multi-layer filters and groupings  
+- Detecting anomalies and cleaning data  
+- Generating pivot-style and percentage-based summary tables  
+- Updating values conditionally using SQL `UPDATE`  
+
+---
+
+## ▶️ How to Run
+
+1. **Clone the repo:**
+   ```bash
+   git clone https://github.com/cmsc-vcu/cmsc408-sp2025-hw8-ishaamalikk.git
+   cd cmsc408-sp2025-hw8-ishaamalikk
+
+	2.	Install dependencies:
+
+poetry install
+
+
+	3.	Activate the Poetry environment:
+
+poetry shell
+
+
+	4.	Render the report:
+
+cd reports
+quarto render report.qmd
+
+
+	5.	✅ Submit report.html to Canvas
+✅ Push your repo and submit to Gradescope for autograding
+
+⸻
+
+📝 Reflection
+
+This project sharpened my ability to structure complex SQL queries in an analytical context. I particularly enjoyed working with conditional logic (CASE), and found the region-income breakdowns both challenging and rewarding. Using CTEs gave me a cleaner way to write multi-step transformations — a skill I’ll definitely carry forward.
+
+⸻
+
+💡 Tip to Future Me:
+Clean queries are happy queries. Comment your logic, use CTEs, and keep your joins tight.
+
