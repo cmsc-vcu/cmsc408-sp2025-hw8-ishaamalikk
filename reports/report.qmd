@@ -15,21 +15,27 @@ config_map = {
 }
 
 cnx,config = create_db_wrapper(config_map)
+```
 
 ## Task 1
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT table_schema, table_name, table_rows
 FROM information_schema.tables
 WHERE table_schema IN ('world_bank_data')
 """)
+```
 
 ## Task 2
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT COUNT(*) AS "Row Count"
 FROM world_bank_data.wdi_country
 """)
+```
 
 ## Task 3
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT DISTINCT country_name, country_region
 FROM world_bank_data.wdi_country
@@ -37,15 +43,19 @@ WHERE country_is_country = 1
 ORDER BY country_name
 LIMIT 22;
 """)
+```
 
 ## Task 4
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_name, country_income_group
 FROM world_bank_data.wdi_country
 WHERE country_is_country = 0;
 """)
+```
 
 ## Task 5
+```{python}
 execute_ddl(cnx, """
 DROP TABLE IF EXISTS my_country;
 """)
@@ -58,67 +68,85 @@ WHERE country_is_country = 1;
 run_sql_and_return_html(cnx, """
 SELECT COUNT(*) FROM my_country;
 """)
+```
 
 ## Task 6
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT COUNT(*)
 FROM my_country;
 """)
+```
 
 ## Task 7
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT DISTINCT country_region
 FROM my_country
 ORDER BY country_region;
 """)
+```
 
 ## Task 8
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_region, COUNT(*) AS num_countries
 FROM my_country
 GROUP BY country_region
 ORDER BY num_countries DESC;
 """)
+```
 
 ## Task 9
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_name, country_region
 FROM my_country
 WHERE country_region = 'North America'
 ORDER BY country_name;
 """)
+```
 
 ## Task 10
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_region, country_name, country_long_name
 FROM my_country
 WHERE country_code = 'QAT';
 """)
+```
 
 ## Task 11
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_code, country_name, country_abbr, country_wb_abbr, country_region
 FROM my_country
 WHERE country_abbr IS DISTINCT FROM country_wb_abbr
 ORDER BY country_name;
 """)
+```
 
 ## Task 12
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_income_group, COUNT(*) AS num_countries
 FROM my_country
 GROUP BY country_income_group
 ORDER BY num_countries DESC;
 """)
+```
 
 ## Task 13
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_name
 FROM my_country
 WHERE country_income_group IS NULL;
 """)
+```
 
 ## Task 14
+```{python}
 execute_ddl(cnx, """
 UPDATE my_country
 SET country_income_group = 'High income'
@@ -129,16 +157,20 @@ SELECT country_name, country_income_group
 FROM my_country
 WHERE country_name = 'Venezuela, RB';
 """)
+```
 
 ## Task 15
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_region, country_income_group, COUNT(*) AS num_countries
 FROM my_country
 GROUP BY country_region, country_income_group
 ORDER BY country_region, country_income_group;
 """)
+```
 
 ## Task 16
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT
   country_region,
@@ -151,8 +183,10 @@ SELECT
 FROM my_country
 GROUP BY country_region;
 """)
+```
 
 ## Task 17
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT COUNT(*) AS num_low_income, country_region, country_income_group
 FROM my_country
@@ -161,8 +195,10 @@ GROUP BY country_region, country_income_group
 ORDER BY num_low_income DESC
 LIMIT 1;
 """)
+```
 
 ## Task 18
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_code, country_name, country_region, country_income_group
 FROM my_country
@@ -174,8 +210,10 @@ AND country_income_group = (
 )
 ORDER BY country_name;
 """)
+```
 
 ## Task 19
+```{python}
 run_sql_and_return_html(cnx, """
 SELECT region.region, income.income
 FROM
@@ -186,8 +224,10 @@ WHERE (region.region, income.income) NOT IN (
   SELECT country_region, country_income_group FROM my_country
 );
 """)
+```
 
 ## Task 20
+```{python}
 run_sql_and_return_html(cnx, """
 WITH base AS (
   SELECT country_region, country_income_group, COUNT(*) AS cnt
@@ -216,8 +256,10 @@ JOIN region_totals rt ON b.country_region = rt.country_region
 JOIN income_totals it ON b.country_income_group = it.country_income_group
 JOIN total t;
 """)
+```
 
 ## Task 21
+```{python}
 run_sql_and_return_html(cnx, """
 WITH income_counts AS (
   SELECT country_income_group, COUNT(*) AS count
