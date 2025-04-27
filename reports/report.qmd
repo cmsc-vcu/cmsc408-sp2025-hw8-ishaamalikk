@@ -14,19 +14,10 @@ config_map = {
   'database': "CMSC408_HW8_DB_NAME"
 }
 
-cnx,config = create_db_wrapper(config_map)
+cnx, config = create_db_wrapper(config_map)
 ```
 
-## Task 1
-```{python}
-run_sql_and_return_html(cnx, """
-SELECT table_schema, table_name, table_rows
-FROM information_schema.tables
-WHERE table_schema IN ('world_bank_data')
-""")
-```
-
-## Task 2
+# Task 1
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT COUNT(*) AS "Row Count"
@@ -34,27 +25,28 @@ FROM world_bank_data.wdi_country
 """)
 ```
 
-## Task 3
+# Task 2
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT DISTINCT country_name, country_region
 FROM world_bank_data.wdi_country
 WHERE country_is_country = 1
 ORDER BY country_name
-LIMIT 22;
+LIMIT 22
 """)
 ```
 
-## Task 4
+# Task 3
 ```{python}
 run_sql_and_return_html(cnx, """
-SELECT country_name, country_income_group
+SELECT country_name
 FROM world_bank_data.wdi_country
-WHERE country_is_country = 0;
+WHERE country_is_country = 0
+ORDER BY country_name
 """)
 ```
 
-## Task 5
+# Task 4
 ```{python}
 execute_ddl(cnx, """
 DROP TABLE IF EXISTS my_country;
@@ -66,138 +58,141 @@ FROM world_bank_data.wdi_country
 WHERE country_is_country = 1;
 """)
 run_sql_and_return_html(cnx, """
-SELECT COUNT(*) FROM my_country;
+SELECT COUNT(*) AS "Row Count"
+FROM my_country
 """)
 ```
 
-## Task 6
+# Task 5
 ```{python}
 run_sql_and_return_html(cnx, """
-SELECT COUNT(*)
-FROM my_country;
+SELECT COUNT(*) AS "Number of Countries"
+FROM my_country
+WHERE country_region IS NOT NULL
 """)
 ```
 
-## Task 7
+# Task 6
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT DISTINCT country_region
 FROM my_country
-ORDER BY country_region;
+ORDER BY country_region
 """)
 ```
 
-## Task 8
+# Task 7
 ```{python}
 run_sql_and_return_html(cnx, """
-SELECT country_region, COUNT(*) AS num_countries
+SELECT country_region, COUNT(*) AS "Number of Countries"
 FROM my_country
 GROUP BY country_region
-ORDER BY num_countries DESC;
+ORDER BY country_region
 """)
 ```
 
-## Task 9
+# Task 8
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_name, country_region
 FROM my_country
 WHERE country_region = 'North America'
-ORDER BY country_name;
+ORDER BY country_name
 """)
 ```
 
-## Task 10
+# Task 9
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_region, country_name, country_long_name
 FROM my_country
-WHERE country_code = 'QAT';
+WHERE country_name = 'Qatar'
 """)
 ```
 
-## Task 11
+# Task 10
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_code, country_name, country_abbr, country_wb_abbr, country_region
 FROM my_country
-WHERE country_abbr IS DISTINCT FROM country_wb_abbr
-ORDER BY country_name;
+WHERE country_abbr <> country_wb_abbr
+ORDER BY country_name
 """)
 ```
 
-## Task 12
+# Task 11
 ```{python}
 run_sql_and_return_html(cnx, """
-SELECT country_income_group, COUNT(*) AS num_countries
+SELECT country_income_group, COUNT(*) AS "Number of Countries"
 FROM my_country
 GROUP BY country_income_group
-ORDER BY num_countries DESC;
+ORDER BY COUNT(*) DESC
 """)
 ```
 
-## Task 13
+# Task 12
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_name
 FROM my_country
-WHERE country_income_group IS NULL;
+WHERE country_income_group IS NULL
 """)
 ```
 
-## Task 14
+# Task 13
 ```{python}
 execute_ddl(cnx, """
 UPDATE my_country
 SET country_income_group = 'High income'
-WHERE country_name = 'Venezuela, RB';
+WHERE country_name = 'Venezuela';
 """)
 run_sql_and_return_html(cnx, """
 SELECT country_name, country_income_group
 FROM my_country
-WHERE country_name = 'Venezuela, RB';
+WHERE country_name = 'Venezuela'
 """)
 ```
 
-## Task 15
+# Task 14
 ```{python}
 run_sql_and_return_html(cnx, """
-SELECT country_region, country_income_group, COUNT(*) AS num_countries
+SELECT country_region, country_income_group, COUNT(*) AS "Number of Countries"
 FROM my_country
 GROUP BY country_region, country_income_group
-ORDER BY country_region, country_income_group;
+ORDER BY country_region, country_income_group
 """)
 ```
 
-## Task 16
+# Task 15
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT
   country_region,
-  SUM(CASE WHEN country_income_group = 'High income' THEN 1 ELSE 0 END) AS High,
-  SUM(CASE WHEN country_income_group = 'Upper middle income' THEN 1 ELSE 0 END) AS UpperMiddle,
-  SUM(CASE WHEN country_income_group = 'Lower middle income' THEN 1 ELSE 0 END) AS LowerMiddle,
-  SUM(CASE WHEN country_income_group = 'Low income' THEN 1 ELSE 0 END) AS Low,
-  SUM(CASE WHEN country_income_group IS NULL THEN 1 ELSE 0 END) AS Unknown,
-  COUNT(*) AS Total
+  SUM(CASE WHEN country_income_group = 'High income' THEN 1 ELSE 0 END) AS "High income",
+  SUM(CASE WHEN country_income_group = 'Upper middle income' THEN 1 ELSE 0 END) AS "Upper middle income",
+  SUM(CASE WHEN country_income_group = 'Lower middle income' THEN 1 ELSE 0 END) AS "Lower middle income",
+  SUM(CASE WHEN country_income_group = 'Low income' THEN 1 ELSE 0 END) AS "Low income",
+  SUM(CASE WHEN country_income_group IS NULL THEN 1 ELSE 0 END) AS "Other",
+  COUNT(*) AS "Total"
 FROM my_country
-GROUP BY country_region;
+GROUP BY country_region
+ORDER BY country_region
 """)
 ```
 
-## Task 17
+# Task 16
 ```{python}
 run_sql_and_return_html(cnx, """
-SELECT COUNT(*) AS num_low_income, country_region, country_income_group
+SELECT country_region, COUNT(*) AS "Number of Low Income Countries"
 FROM my_country
 WHERE country_income_group = 'Low income'
-GROUP BY country_region, country_income_group
-ORDER BY num_low_income DESC
-LIMIT 1;
+GROUP BY country_region
+ORDER BY COUNT(*) DESC
+LIMIT 1
 """)
 ```
 
-## Task 18
+# Task 17
 ```{python}
 run_sql_and_return_html(cnx, """
 SELECT country_code, country_name, country_region, country_income_group
@@ -208,25 +203,33 @@ WHERE country_region = (
 AND country_income_group = (
   SELECT country_income_group FROM my_country WHERE country_code = 'MHL'
 )
-ORDER BY country_name;
+ORDER BY country_name
 """)
 ```
 
-## Task 19
+# Task 18
 ```{python}
 run_sql_and_return_html(cnx, """
-SELECT region.region, income.income
-FROM
-  (SELECT DISTINCT country_region AS region FROM my_country) AS region
-CROSS JOIN
-  (SELECT DISTINCT country_income_group AS income FROM my_country) AS income
-WHERE (region.region, income.income) NOT IN (
-  SELECT country_region, country_income_group FROM my_country
-);
+WITH regions AS (
+  SELECT DISTINCT country_region FROM my_country
+),
+income_groups AS (
+  SELECT DISTINCT country_income_group FROM my_country
+)
+SELECT r.country_region, i.country_income_group
+FROM regions r
+CROSS JOIN income_groups i
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM my_country
+  WHERE country_region = r.country_region
+    AND country_income_group = i.country_income_group
+)
+ORDER BY r.country_region, i.country_income_group
 """)
 ```
 
-## Task 20
+# Task 19
 ```{python}
 run_sql_and_return_html(cnx, """
 WITH base AS (
@@ -254,11 +257,12 @@ SELECT
 FROM base b
 JOIN region_totals rt ON b.country_region = rt.country_region
 JOIN income_totals it ON b.country_income_group = it.country_income_group
-JOIN total t;
+JOIN total t
+ORDER BY b.country_region, b.country_income_group
 """)
 ```
 
-## Task 21
+# Task 20
 ```{python}
 run_sql_and_return_html(cnx, """
 WITH income_counts AS (
@@ -275,23 +279,42 @@ SELECT
   t.total_count AS total_countries,
   ROUND(i.count * 100.0 / t.total_count, 1) AS pct_total
 FROM income_counts i, total t
-ORDER BY pct_total DESC;
+ORDER BY pct_total DESC
 """)
 ```
 
-Reflection  
+# Task 21
+```{python}
+run_sql_and_return_html(cnx, """
+WITH income_counts AS (
+  SELECT country_income_group, COUNT(*) AS count
+  FROM my_country
+  GROUP BY country_income_group
+),
+total AS (
+  SELECT COUNT(*) AS total_count FROM my_country
+)
+SELECT
+  i.country_income_group AS income_group,
+  i.count AS num_countries,
+  t.total_count AS total_countries,
+  ROUND(i.count * 100.0 / t.total_count, 1) AS pct_total
+FROM income_counts i, total t
+ORDER BY pct_total DESC
+""")
+```
+
+## Reflection
 1. I feel most confident writing SELECT statements and using GROUP BY, but I need more practice with CROSS JOIN and nested subqueries. This assignment gave me a solid foundation.  
 2. For complex tasks like Task 18, I broke them down into parts: first understanding the goal, then writing queries in steps. I used CTEs to test logic piece by piece.  
 3. My biggest takeaway is how powerful SQL is for data analysis and transformation. These skills will help me analyze real-world data and automate insights efficiently.
 
-README
+## README
 
 A quality README is an important part of EVERY project. Using the Quarto include command we’re including a copy of your README in the project report so that a human can evaluate it.
 
-Make sure that you edit the README so that it’s explanatory! Note that you don’t need a readme within the reports folder for this assignment. We’re only focused on the root README.md.
+Make sure that you edit the README so that it’s explanatory! Note that you don’t need a README inside the `reports` folder for this assignment. We’re only focused on the root `README.md`.
 
-Here is some info on how to write a good README!
-
-::: {style="background:lightgray; margin-left:20px; border-top: 3px solid black; border-bottom: 3px solid black; padding-left:20px; padding-right:20px"}
+::: {style="background:lightgray; margin-left:20px; border-top:3px solid black; border-bottom:3px solid black; padding-left:20px; padding-right:20px"}
 {{< include ../README.md >}}
 :::
